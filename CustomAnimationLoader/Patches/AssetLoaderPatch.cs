@@ -77,23 +77,26 @@ namespace CustomAnimationLoader.Patches
         private static MethodInfo OriginalMethod => Type.GetType("LoadingScreenMod.AssetDeserializer, LoadingScreenMod")
                 ?.GetMethod("DeserializeGameObject", BindingFlags.Instance | BindingFlags.NonPublic);
 
-        public static void Postfix(ref GameObject __result, Package ___package)
+        public static void Postfix(ref UnityEngine.Object __result, Package ___package)
         {
             if (___package == null)
             {
                 return;
             }
 
-            var prefab = __result.GetComponent<BuildingInfo>();
-            if (prefab == null || prefab.name == null)
+            if (__result is GameObject gameObject)
             {
-                return;
-            }
+                var prefab = gameObject.GetComponent<BuildingInfo>();
+                if (prefab == null || prefab.name == null)
+                {
+                    return;
+                }
 
-            var replacementPrefab = AssetAnimationLoader.instance.ProcessBuildingAsset(___package, prefab);
-            if (replacementPrefab != null)
-            {
-                __result = replacementPrefab.gameObject;
+                var replacementPrefab = AssetAnimationLoader.instance.ProcessBuildingAsset(___package, prefab);
+                if (replacementPrefab != null)
+                {
+                    __result = replacementPrefab.gameObject;
+                }
             }
         }
     }
@@ -130,23 +133,26 @@ namespace CustomAnimationLoader.Patches
         private static MethodInfo OriginalMethod => Type.GetType("LoadingScreenModTest.AssetDeserializer, LoadingScreenModTest")
                 ?.GetMethod("DeserializeGameObject", BindingFlags.Instance | BindingFlags.NonPublic);
 
-        public static void Postfix(ref GameObject __result, Package ___package)
+        public static void Postfix(ref UnityEngine.Object __result, Package ___package)
         {
             if (___package == null)
             {
                 return;
             }
 
-            var prefab = __result.GetComponent<BuildingInfo>();
-            if (prefab == null || prefab.name == null)
+            if (__result is GameObject gameObject)
             {
-                return;
-            }
+                var prefab = gameObject.GetComponent<BuildingInfo>();
+                if (prefab == null || prefab.name == null)
+                {
+                    return;
+                }
 
-            var replacementPrefab = AssetAnimationLoader.instance.ProcessBuildingAsset(___package, prefab);
-            if (replacementPrefab != null)
-            {
-                __result = replacementPrefab.gameObject;
+                var replacementPrefab = AssetAnimationLoader.instance.ProcessBuildingAsset(___package, prefab);
+                if (replacementPrefab != null)
+                {
+                    __result = replacementPrefab.gameObject;
+                }
             }
         }
     }
