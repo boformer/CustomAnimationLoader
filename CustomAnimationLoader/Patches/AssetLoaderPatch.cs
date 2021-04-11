@@ -26,6 +26,8 @@ namespace CustomAnimationLoader.Patches
 
         public static void Postfix(Package.Asset __instance, ref object __result)
         {
+            if(!Mod.IsInGame) return;
+
             if (!(__result is GameObject) || __instance.package == null)
             {
                 return;
@@ -79,6 +81,8 @@ namespace CustomAnimationLoader.Patches
 
         public static void Postfix(ref UnityEngine.Object __result, Package ___package)
         {
+            if (!Mod.IsInGame) return;
+
             if (___package == null)
             {
                 return;
@@ -135,6 +139,8 @@ namespace CustomAnimationLoader.Patches
 
         public static void Postfix(ref UnityEngine.Object __result, Package ___package)
         {
+            if (!Mod.IsInGame) return;
+
             if (___package == null)
             {
                 return;
