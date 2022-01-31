@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using ColossalFramework.Packaging;
-using Harmony;
+using HarmonyLib;
 using UnityEngine;
 
 namespace CustomAnimationLoader.Patches
@@ -15,14 +15,14 @@ namespace CustomAnimationLoader.Patches
     {
         private const string AssetWorkshopTag = "Custom Animation";
 
-        public static void Apply(HarmonyInstance harmony)
+        public static void Apply(Harmony harmony)
         {
             var prefix = typeof(WorkshopAssetUploadPanelPatch).GetMethod("UpdateItemPrefix");
             harmony.Patch(OriginalMethod, new HarmonyMethod(prefix), null, null);
             Debug.Log("WorkshopAssetUploadPanelPatch applied");
         }
 
-        public static void Revert(HarmonyInstance harmony)
+        public static void Revert(Harmony harmony)
         {
             harmony.Unpatch(OriginalMethod, HarmonyPatchType.Prefix);
         }
