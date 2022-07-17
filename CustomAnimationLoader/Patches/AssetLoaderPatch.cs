@@ -26,7 +26,7 @@ namespace CustomAnimationLoader.Patches
 
         public static void Postfix(Package.Asset __instance, ref object __result)
         {
-            if(!Mod.IsInGame) return;
+            if (!Mod.IsInGame) return;
 
             if (!(__result is GameObject) || __instance.package == null)
             {
@@ -164,10 +164,13 @@ namespace CustomAnimationLoader.Patches
     }
 
     // Klyte LSM Asset Loader
-    public static class LsmKlyteAssetDeserializerPatch {
-        public static void Apply(Harmony harmony) {
+    public static class LsmKlyteAssetDeserializerPatch
+    {
+        public static void Apply(Harmony harmony)
+        {
             var originalMethod = OriginalMethod;
-            if (originalMethod == null) {
+            if (originalMethod == null)
+            {
                 Debug.LogError("LSM Klyte AssetDeserializer#DeserializeGameObject() not found!");
                 return;
             }
@@ -177,9 +180,11 @@ namespace CustomAnimationLoader.Patches
             Debug.Log("LSM Klyte patched!");
         }
 
-        public static void Revert(Harmony harmony) {
+        public static void Revert(Harmony harmony)
+        {
             var originalMethod = OriginalMethod;
-            if (originalMethod == null) {
+            if (originalMethod == null)
+            {
                 Debug.LogError("LSM Klyte AssetDeserializer#DeserializeGameObject() not found!");
                 return;
             }
@@ -190,21 +195,85 @@ namespace CustomAnimationLoader.Patches
         public static MethodInfo OriginalMethod => Type.GetType("LoadingScreenMod.AssetDeserializer, LoadingScreenModKlyte", false)
                 ?.GetMethod("DeserializeGameObject", BindingFlags.Instance | BindingFlags.NonPublic);
 
-        public static void Postfix(ref UnityEngine.Object __result, Package ___package) {
+        public static void Postfix(ref UnityEngine.Object __result, Package ___package)
+        {
             if (!Mod.IsInGame) return;
 
-            if (___package == null) {
+            if (___package == null)
+            {
                 return;
             }
 
-            if (__result is GameObject gameObject) {
+            if (__result is GameObject gameObject)
+            {
                 var prefab = gameObject.GetComponent<BuildingInfo>();
-                if (prefab == null || prefab.name == null) {
+                if (prefab == null || prefab.name == null)
+                {
                     return;
                 }
 
                 var replacementPrefab = AssetAnimationLoader.instance.ProcessBuildingAsset(___package, prefab);
-                if (replacementPrefab != null) {
+                if (replacementPrefab != null)
+                {
+                    __result = replacementPrefab.gameObject;
+                }
+            }
+        }
+    }
+
+
+    // LSM Revisited Asset Loader
+    public static class LsmRevisitedAssetDeserializerPatch
+    {
+        public static void Apply(Harmony harmony)
+        {
+            var originalMethod = OriginalMethod;
+            if (originalMethod == null)
+            {
+                Debug.LogError("LSM Revisited AssetDeserializer#DeserializeGameObject() not found!");
+                return;
+            }
+
+            var postfix = typeof(PackageAssetPatch).GetMethod("Postfix");
+            harmony.Patch(originalMethod, null, new HarmonyMethod(postfix), null);
+            Debug.Log("LSM Revisited patched!");
+        }
+
+        public static void Revert(Harmony harmony)
+        {
+            var originalMethod = OriginalMethod;
+            if (originalMethod == null)
+            {
+                Debug.LogError("LSM Revisited AssetDeserializer#DeserializeGameObject() not found!");
+                return;
+            }
+
+            harmony.Unpatch(originalMethod, HarmonyPatchType.Postfix);
+        }
+
+        public static MethodInfo OriginalMethod => Type.GetType("LoadingScreenModRevisited.AssetDeserializer, LoadingScreenModRevisited", false)
+                ?.GetMethod("DeserializeGameObject", BindingFlags.Instance | BindingFlags.NonPublic);
+
+        public static void Postfix(ref UnityEngine.Object __result, Package ___package)
+        {
+            if (!Mod.IsInGame) return;
+
+            if (___package == null)
+            {
+                return;
+            }
+
+            if (__result is GameObject gameObject)
+            {
+                var prefab = gameObject.GetComponent<BuildingInfo>();
+                if (prefab == null || prefab.name == null)
+                {
+                    return;
+                }
+
+                var replacementPrefab = AssetAnimationLoader.instance.ProcessBuildingAsset(___package, prefab);
+                if (replacementPrefab != null)
+                {
                     __result = replacementPrefab.gameObject;
                 }
             }

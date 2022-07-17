@@ -9,6 +9,7 @@ namespace CustomAnimationLoader.Patches {
         private static bool lsmPatchApplied = false;
         private static bool lsmTestPatchApplied = false;
         private static bool lsmKlytePatchApplied = false;
+        private static bool lsmRevisitedPatchApplied = false;
 
         public static void PatchAll() {
             if (patched) return;
@@ -34,6 +35,12 @@ namespace CustomAnimationLoader.Patches {
                 LsmKlyteAssetDeserializerPatch.Apply(harmony);
                 lsmKlytePatchApplied = true;
             }
+
+            if (LsmRevisitedAssetDeserializerPatch.OriginalMethod != null)
+            {
+                LsmRevisitedAssetDeserializerPatch.Apply(harmony);
+                lsmRevisitedPatchApplied = true;
+            }
         }
 
         public static void UnpatchAll() {
@@ -57,6 +64,12 @@ namespace CustomAnimationLoader.Patches {
 
             if (lsmKlytePatchApplied) {
                 LsmKlyteAssetDeserializerPatch.Revert(harmony);
+                lsmKlytePatchApplied = false;
+            }
+
+            if (lsmRevisitedPatchApplied)
+            {
+                LsmRevisitedAssetDeserializerPatch.Revert(harmony);
                 lsmKlytePatchApplied = false;
             }
 
